@@ -22,7 +22,7 @@ export class UserEntity {
     return this.props.password;
   }
 
-  get createdAt(): Date {
+  get createdAt(): Date | undefined {
     return this.props.createdAt;
   }
 }
