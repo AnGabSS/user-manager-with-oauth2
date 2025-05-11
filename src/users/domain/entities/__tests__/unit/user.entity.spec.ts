@@ -1,41 +1,70 @@
-import { faker } from '@faker-js/faker';
-import { UserEntity, UserProps } from '../../user.entity';
+import { UserDataBuilder } from '../../testing/helpers/user-data-builder';
+import { UserRole } from '../user-role.enum';
+import { UserEntity } from '../user.entity';
+import { UserProps } from '../user.props';
 
 describe('UserEntity unit tests', () => {
   let props: UserProps;
   let sut: UserEntity;
+
   beforeEach(() => {
-    props = {
-      name: faker.person.fullName(),
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-    };
+    props = UserDataBuilder({});
+
     sut = new UserEntity(props);
   });
-  it('Constructor method', () => {
-    expect(sut.props).toEqual(props);
-  });
 
-  it('Getter of name field', () => {
-    expect(sut.name).toBeDefined();
-    expect(sut.name).toEqual(props.name);
-    expect(typeof sut.name).toBe('string');
-  });
-
-  it('Getter of email field', () => {
-    expect(sut.email).toBeDefined();
-    expect(sut.email).toEqual(props.email);
-    expect(typeof sut.email).toBe('string');
-  });
-
-  it('Getter of password field', () => {
-    expect(sut.password).toBeDefined();
-    expect(sut.password).toEqual(props.password);
-    expect(typeof sut.password).toBe('string');
-  });
-
-  it('Getter of createdAt field', () => {
-    expect(sut.createdAt).toBeDefined();
+  it('should create a user with correct properties', () => {
+    expect(sut.name).toBe(props.name);
+    expect(sut.email).toBe(props.email);
+    expect(sut.password).toBe(props.password);
+    expect(sut.role).toBe(props.role);
     expect(sut.createdAt).toBeInstanceOf(Date);
+    expect(sut.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it('should update name and change updatedAt', () => {
+    const oldUpdatedAt = sut.updatedAt;
+    const newName = 'New Name';
+
+    sut.updateName(newName);
+
+    expect(sut.name).toBe(newName);
+    expect(sut.updatedAt.getTime()).toBeGreaterThanOrEqual(
+      oldUpdatedAt.getTime(),
+    );
+  });
+
+  it('should throw error when updating name with invalid value', () => {
+    expect(() => sut.updateName('')).toThrow('Invalid name.');
+  });
+
+  it('should update email', () => {
+    const newEmail = 'test@example.com';
+    sut.updateEmail(newEmail);
+    expect(sut.email).toBe(newEmail);
+  });
+
+  it('should throw error with invalid email', () => {
+    expect(() => sut.updateEmail('invalid')).toThrow('Invalid email.');
+  });
+
+  it('should update password', () => {
+    const newPassword = 'securePass123';
+    sut.updatePassword(newPassword);
+    expect(sut.password).toBe(newPassword);
+  });
+
+  it('should throw error when password is too short', () => {
+    expect(() => sut.updatePassword('123')).toThrow('Password too short.');
+  });
+
+  it('should change role', () => {
+    sut.changeRole(UserRole.ADMIN);
+    expect(sut.role).toBe(UserRole.ADMIN);
+  });
+
+  it('should convert entity to primitives', () => {
+    const primitives = sut.toPrimitives();
+    expect(primitives).toEqual(expect.objectContaining(props));
   });
 });
