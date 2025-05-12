@@ -24,7 +24,7 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   get id(): string {
-    return this.id;
+    return this._id;
   }
 
   get name(): string {
