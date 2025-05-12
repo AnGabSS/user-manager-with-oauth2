@@ -71,7 +71,7 @@ export class UserEntity extends Entity<UserProps> {
     if (!newName || newName.trim().length < 2) {
       throw new Error('Invalid name.');
     }
-    this.props.name = newName;
+    this._name = newName;
     this.updateDate();
   }
 
@@ -79,7 +79,7 @@ export class UserEntity extends Entity<UserProps> {
     if (!newEmail.includes('@')) {
       throw new Error('Invalid email.');
     }
-    this.props.email = newEmail;
+    this._email = newEmail;
     this.updateDate();
   }
 
@@ -92,12 +92,12 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   changeRole(role: UserRole): void {
-    this.props.role = role;
+    this._role = role;
     this.updateDate();
   }
 
   private updateDate(): void {
-    this.props.updatedAt = new Date();
+    this._updatedAt = new Date();
   }
 
   toPrimitives(): UserProps {
