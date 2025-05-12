@@ -23,7 +23,7 @@ export class UserEntity extends Entity<UserProps> {
     this._updatedAt = props.updatedAt ?? new Date();
   }
 
-  get id(): number {
+  get id(): string {
     return this.id;
   }
 

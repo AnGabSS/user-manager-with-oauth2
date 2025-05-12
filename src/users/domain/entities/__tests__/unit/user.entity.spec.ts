@@ -1,7 +1,7 @@
-import { UserDataBuilder } from '../../testing/helpers/user-data-builder';
-import { UserRole } from '../user-role.enum';
-import { UserEntity } from '../user.entity';
-import { UserProps } from '../user.props';
+import { UserDataBuilder } from '../../../testing/helpers/user-data-builder';
+import { UserRole } from '../../user-role.enum';
+import { UserEntity } from '../../user.entity';
+import { UserProps } from '../../user.props';
 
 describe('UserEntity unit tests', () => {
   let props: UserProps;
