@@ -72,6 +72,8 @@ export class UserEntity extends Entity<UserProps> {
       throw new Error('Invalid name.')
     }
     this._name = newName
+    this.name = newName
+    this.props.name = newName
     this.updateDate()
   }
 

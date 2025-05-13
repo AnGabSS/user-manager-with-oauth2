@@ -6,7 +6,7 @@ export function UserDataBuilder(props: Partial<UserProps>): UserProps {
   return {
     name: props.name ?? faker.person.fullName(),
     email: props.email ?? faker.internet.email(),
-    password: props.password ?? faker.internet.password(),
+    password: props.password ?? faker.internet.password({length: 10}),
     role: props.role ?? UserRole.USER,
     createdAt: props.createdAt ?? new Date(),
     updatedAt: props.updatedAt ?? new Date(),

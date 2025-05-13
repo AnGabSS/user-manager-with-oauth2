@@ -20,6 +20,7 @@ export namespace UpdateUserUseCase {
       }
       const entity = await this.userRepository.findById(input.id)
       entity.updateName(input.name)
+
       await this.userRepository.update(entity)
       return UserOutputMapper.toOutput(entity)
     }

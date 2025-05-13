@@ -31,7 +31,7 @@ describe('UpdateUserUseCase unit tests', () => {
     const items = [new UserEntity(UserDataBuilder({}))]
     repository.items = items
 
-    const result = await sut.execute({ id: items[0]._id, name: 'new name' })
+    const result = await sut.execute({ id: items[0].id, name: 'new name' })
     expect(spyUpdate).toHaveBeenCalledTimes(1)
     expect(result).toMatchObject({
       id: items[0].id,
