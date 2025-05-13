@@ -1,8 +1,8 @@
 // src/shared/infrastructure/env-config/env-config.module.ts
-import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigModule, ConfigModuleOptions } from '@nestjs/config';
-import { join } from 'node:path';
-import { EnvConfigService } from './env-config.service';
+import { DynamicModule, Module } from '@nestjs/common'
+import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
+import { join } from 'node:path'
+import { EnvConfigService } from './env-config.service'
 
 @Module({})
 export class EnvConfigModule {
@@ -20,6 +20,6 @@ export class EnvConfigModule {
       ],
       providers: [EnvConfigService],
       exports: [EnvConfigService],
-    };
+    }
   }
 }

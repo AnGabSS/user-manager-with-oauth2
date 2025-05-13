@@ -24,7 +24,7 @@ describe('SignupUseCase unit tests', () => {
       name: props.name,
       email: props.email,
       password: props.password,
-      role: props.role
+      role: props.role,
     })
     expect(result.id).toBeDefined()
     expect(result.createdAt).toBeInstanceOf(Date)

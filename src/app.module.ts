@@ -1,13 +1,17 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module';
-import { UsersModule } from './users/infrastructure/users.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module'
+import { UsersModule } from './users/infrastructure/users.module'
+import { DatabaseModule } from './shared/infrastructure/database/database.module';
 
 @Module({
   imports: [
-    EnvConfigModule.forRoot(), // ✅ Corrigido
+    EnvConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+    }),
     UsersModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

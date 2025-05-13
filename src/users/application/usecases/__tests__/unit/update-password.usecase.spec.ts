@@ -81,7 +81,7 @@ describe('UpdatePasswordUseCase unit tests', () => {
       oldPassword: '1234222',
     })
 
-    const updatedUser = repository.items[0] 
+    const updatedUser = repository.items[0]
     const checkNewPassword = await hashProvider.compareHash(
       '4567222',
       updatedUser.password,

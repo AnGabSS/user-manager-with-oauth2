@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator'
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 import { ClassValidatorFields } from '../../class-validator-fields'
 
 class StubRules {
@@ -39,7 +45,7 @@ describe('ClassValidatorFields integration tests', () => {
         'email must be an email',
         'email should not be empty',
         'email must be a string',
-        'email must be shorter than or equal to 255 characters'
+        'email must be shorter than or equal to 255 characters',
       ],
     })
   })
@@ -47,7 +53,9 @@ describe('ClassValidatorFields integration tests', () => {
   it('Should validate without errors', () => {
     const sut = new StubClassValidatorFields()
 
-    expect(sut.validate({ name: 'value', email: 'teste@teste.com' })).toBeTruthy()
+    expect(
+      sut.validate({ name: 'value', email: 'teste@teste.com' }),
+    ).toBeTruthy()
     expect(sut.validatedData).toStrictEqual(
       new StubRules({ name: 'value', email: 'teste@teste.com' }),
     )

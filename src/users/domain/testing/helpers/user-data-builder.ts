@@ -1,6 +1,6 @@
-import { faker } from '@faker-js/faker/.';
-import { UserRole } from '../../entities/user-role.enum';
-import { UserProps } from '../../entities/user.props';
+import { faker } from '@faker-js/faker/.'
+import { UserRole } from '../../entities/user-role.enum'
+import { UserProps } from '../../entities/user.props'
 
 export function UserDataBuilder(props: Partial<UserProps>): UserProps {
   return {
@@ -10,5 +10,5 @@ export function UserDataBuilder(props: Partial<UserProps>): UserProps {
     role: props.role ?? UserRole.USER,
     createdAt: props.createdAt ?? new Date(),
     updatedAt: props.updatedAt ?? new Date(),
-  };
+  }
 }
