@@ -1,4 +1,3 @@
-// env-config.module.ts
 import { DynamicModule, Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { join } from 'node:path'
@@ -11,9 +10,11 @@ export class EnvConfigModule {
       module: EnvConfigModule,
       imports: [
         ConfigModule.forRoot({
-          isGlobal: true,
           envFilePath: [
-            join(__dirname, `../../../../.env.${process.env.NODE_ENV}`),
+            join(
+              __dirname,
+              `../../../../.env.${process.env.NODE_ENV || 'development'}`,
+            ),
           ],
           ...options,
         }),

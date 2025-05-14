@@ -6,8 +6,9 @@ import { AuthService } from './auth.service'
 
 @Module({
   imports: [
+    EnvConfigModule.forRoot(),
     JwtModule.registerAsync({
-      imports: [EnvConfigModule], // Importa o módulo que fornece EnvConfigService
+      imports: [EnvConfigModule.forRoot()],
       useFactory: (configService: EnvConfigService) => ({
         global: true,
         secret: configService.getJwtSecret(),
