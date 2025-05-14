@@ -1,3 +1,4 @@
+import { AuthService } from '@/auth/infrastructure/auth/auth.service'
 import { SignupUseCase } from '@/users/application/usecases/signup.usecase'
 import {
   Body,
@@ -47,6 +48,9 @@ export class UsersController {
   @Inject(ListUsersUseCase.UseCase)
   private listUsersUseCase: ListUsersUseCase.UseCase
 
+  @Inject(AuthService)
+  private authService: AuthService
+
   @Post()
   async create(@Body() createUserDto: SignupDTO) {
     return this.signupUseCase.execute(createUserDto)
@@ -55,7 +59,8 @@ export class UsersController {
   @HttpCode(200)
   @Post('login')
   async login(@Body() loginUserDTO: SigninDTO) {
-    return this.signinUseCase.execute(loginUserDTO)
+    const output = await this.signinUseCase.execute(loginUserDTO)
+    return this.authService.generateJwt(output.id)
   }
 
   @Get()

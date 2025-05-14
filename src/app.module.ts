@@ -1,19 +1,10 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
+import { AuthModule } from './auth/infrastructure/auth/auth.module'
+import { DatabaseModule } from './shared/infrastructure/database/database.module'
 import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module'
 import { UsersModule } from './users/infrastructure/users.module'
-import { DatabaseModule } from './shared/infrastructure/database/database.module';
 
 @Module({
-  imports: [
-    EnvConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
-    }),
-    UsersModule,
-    DatabaseModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [EnvConfigModule.forRoot(), UsersModule, DatabaseModule, AuthModule],
 })
 export class AppModule {}

@@ -3,24 +3,11 @@ import { UserRole } from './user-role.enum'
 import { UserProps } from './user.props'
 
 export class UserEntity extends Entity<UserProps> {
-  private _name: string
-  private _email: string
-  private _password: string
-  private _role: UserRole
-  private readonly _createdAt: Date
-  private _updatedAt: Date
-
   constructor(
     public readonly props: UserProps,
     id?: string,
   ) {
     super(props, id)
-    this._name = props.name
-    this._email = props.email
-    this._password = props.password
-    this._role = props.role
-    this._createdAt = props.createdAt ?? new Date()
-    this._updatedAt = props.updatedAt ?? new Date()
   }
 
   get id(): string {
@@ -28,7 +15,7 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   get name(): string {
-    return this._name
+    return this.props.name
   }
 
   private set name(newName: string) {
@@ -36,7 +23,7 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   get email(): string {
-    return this._email
+    return this.props.email
   }
 
   private set email(newEmail: string) {
@@ -44,11 +31,11 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   get password(): string {
-    return this._password
+    return this.props.password
   }
 
   get role(): UserRole {
-    return this._role
+    return this.props.role
   }
 
   private set role(newRole: UserRole) {
@@ -56,11 +43,11 @@ export class UserEntity extends Entity<UserProps> {
   }
 
   get createdAt(): Date {
-    return this._createdAt
+    return this.props.createdAt
   }
 
   get updatedAt(): Date {
-    return this._updatedAt
+    return this.props.updatedAt
   }
 
   private set updatedAt(newUpdatedAt: Date) {
@@ -71,8 +58,6 @@ export class UserEntity extends Entity<UserProps> {
     if (!newName || newName.trim().length < 2) {
       throw new Error('Invalid name.')
     }
-    this._name = newName
-    this.name = newName
     this.props.name = newName
     this.updateDate()
   }
@@ -81,7 +66,7 @@ export class UserEntity extends Entity<UserProps> {
     if (!newEmail.includes('@')) {
       throw new Error('Invalid email.')
     }
-    this._email = newEmail
+    this.props.email = newEmail
     this.updateDate()
   }
 
@@ -89,27 +74,27 @@ export class UserEntity extends Entity<UserProps> {
     if (newPassword.length < 6) {
       throw new Error('Password too short.')
     }
-    this._password = newPassword
+    this.props.password = newPassword
     this.updateDate()
   }
 
   changeRole(role: UserRole): void {
-    this._role = role
+    this.props.role = role
     this.updateDate()
   }
 
   private updateDate(): void {
-    this._updatedAt = new Date()
+    this.props.updatedAt = new Date()
   }
 
   toPrimitives(): UserProps {
     return {
-      name: this._name,
-      email: this._email,
-      password: this._password,
-      role: this._role,
-      createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
+      name: this.props.name,
+      email: this.props.email,
+      password: this.props.password,
+      role: this.props.role,
+      createdAt: this.props.createdAt,
+      updatedAt: this.props.updatedAt,
     }
   }
 }

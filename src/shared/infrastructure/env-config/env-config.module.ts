@@ -1,4 +1,4 @@
-// src/shared/infrastructure/env-config/env-config.module.ts
+// env-config.module.ts
 import { DynamicModule, Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { join } from 'node:path'
