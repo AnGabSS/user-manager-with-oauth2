@@ -4,14 +4,15 @@ import { UserRole } from '@/users/domain/entities/user-role.enum'
 import {User} from '@prisma/client'
 
 export class UserModelMapper {
-  static toEntity(model: User) {
+  static toEntity(model: User, searched = false) {
     const data = {
       name: model.name,
       email: model.email,
-      password: model.password,
+      ...(!searched && { password: model.password }),
       role: UserRole[model.role as keyof typeof UserRole], // 👈 conversão explícita
       createdAt: model.createdAt,
-      updatedAt: model.updatedAt
+      updatedAt: model.updatedAt,
+      lastLoginAt: model.lastLoginAt
     }
 
     try {

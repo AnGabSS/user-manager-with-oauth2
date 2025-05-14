@@ -3,6 +3,7 @@ import { EnvConfigService } from '@/shared/infrastructure/env-config/env-config.
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { AuthService } from './auth.service'
+import { GoogleStrategy } from './strategies/google.strategy'
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AuthService } from './auth.service'
       inject: [EnvConfigService],
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

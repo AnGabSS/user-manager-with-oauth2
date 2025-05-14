@@ -13,6 +13,7 @@ import { UpdateUserUseCase } from '../application/usecases/update-user.usecase'
 import { UserPrismaRepository } from './database/prisma/repositories/user-prisma.repository'
 import { BcryptHashProvider } from './providers/hash-provider/bcryptjs-hash.provider'
 import { UsersController } from './users.controller'
+import { ListInactiveUsersUseCase } from '../application/usecases/list-inactive-users.usecase'
 
 @Module({
   imports: [AuthModule],
@@ -64,6 +65,13 @@ import { UsersController } from './users.controller'
       provide: ListUsersUseCase.UseCase,
       useFactory: (userRepository: UserRepository.Repository) => {
         return new ListUsersUseCase.UseCase(userRepository)
+      },
+      inject: ['UserRepository'],
+    },
+    {
+      provide: ListInactiveUsersUseCase.UseCase,
+      useFactory: (userRepository: UserRepository.Repository) => {
+        return new ListInactiveUsersUseCase.UseCase(userRepository)
       },
       inject: ['UserRepository'],
     },

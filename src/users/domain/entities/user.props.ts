@@ -6,5 +6,6 @@ export type UserProps = {
   password: string
   role: UserRole
   createdAt: Date
-  updatedAt?: Date
+  updatedAt?: Date,
+  lastLoginAt?: Date
 }

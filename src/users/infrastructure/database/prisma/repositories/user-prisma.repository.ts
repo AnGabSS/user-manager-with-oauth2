@@ -10,7 +10,7 @@ export class UserPrismaRepository implements UserRepository.Repository {
   sortableFields: string[] = ['name', 'createdAt']
 
   constructor(private prismaService: PrismaService) {}
-
+ 
   async findByEmail(email: string): Promise<UserEntity> {
     try {
       const user = await this.prismaService.user.findUnique({
@@ -50,14 +50,17 @@ export class UserPrismaRepository implements UserRepository.Repository {
     })
 
     const models = await this.prismaService.user.findMany({
-      ...(props.filter && {
         where: {
+          ...(props.filter && {
           name: {
             contains: props.filter,
             mode: 'insensitive',
           },
+          }),
+          ...(props.role && {
+            role: props.role
+          })
         },
-      }),
       orderBy: {
         [orderByField]: orderByDir,
       },
@@ -66,13 +69,14 @@ export class UserPrismaRepository implements UserRepository.Repository {
     })
 
     return new UserRepository.SearchResult({
-      items: models.map(model => UserModelMapper.toEntity(model)),
+      items: models.map(model => UserModelMapper.toEntity(model, true)),
       total: count,
       currentPage: props.page,
       perPage: props.perPage,
       sort: orderByField,
       sortDir: orderByDir,
       filter: props.filter,
+      role: props.role
     })
   }
 
@@ -118,4 +122,58 @@ export class UserPrismaRepository implements UserRepository.Repository {
       throw new NotFoundError(`UserModel not found using ID ${id}`)
     }
   }
+
+  async findInactivesUsers(
+  props: UserRepository.SearchParams,
+): Promise<UserRepository.SearchResult> {
+  const sortable = this.sortableFields?.includes(props.sort) || false
+  const orderByField = sortable ? props.sort : 'createdAt'
+  const orderByDir = sortable ? props.sortDir : 'desc'
+
+  const today = new Date()
+  const oneMonthAgo = new Date(today.setDate(today.getDate() - 30))
+
+  const whereClause: any = {
+    lastLoginAt: {
+      lt: oneMonthAgo,
+    },
+  }
+
+  if (props.filter) {
+    whereClause.name = {
+      contains: props.filter,
+      mode: 'insensitive',
+    }
+  }
+
+  if (props.role) {
+    whereClause.role = props.role
+  }
+
+  const count = await this.prismaService.user.count({
+    where: whereClause,
+  })
+
+  const models = await this.prismaService.user.findMany({
+    where: whereClause,
+    orderBy: {
+      [orderByField]: orderByDir,
+    },
+    skip: props.page && props.page > 0 ? (props.page - 1) * props.perPage : 0,
+    take: props.perPage && props.perPage > 0 ? props.perPage : 15,
+  })
+
+  return new UserRepository.SearchResult({
+    items: models.map(model => UserModelMapper.toEntity(model, true)),
+    total: count,
+    currentPage: props.page,
+    perPage: props.perPage,
+    sort: orderByField,
+    sortDir: orderByDir,
+    filter: props.filter,
+    role: props.role,
+  })
+}
+
+
 }

@@ -14,15 +14,29 @@ export class UserPresenter {
   @ApiProperty({ description: 'E-mail do usuário' })
   email: string
 
+  @ApiProperty({ description: 'Cargo do usuário' })
+  role: string
+
   @ApiProperty({ description: 'Data de criação do usuário' })
   @Transform(({ value }: { value: Date }) => value.toISOString())
   createdAt: Date
+
+  @ApiProperty({ description: 'Data da ultima atualização do usuário' })
+  @Transform(({ value }: { value: Date }) => value.toISOString())
+  updateAt: Date
+
+  @ApiProperty({ description: 'Data da ultima entrada do usuário' })
+  @Transform(({ value }: { value: Date }) => value.toISOString())
+  lastLoginAt: Date
 
   constructor(output: UserOutput) {
     this.id = output.id
     this.name = output.name
     this.email = output.email
+    this.role = output.role
     this.createdAt = output.createdAt
+    this.updateAt = output.updatedAt
+    this.lastLoginAt = output.lastLoginAt
   }
 }
 

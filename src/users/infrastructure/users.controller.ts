@@ -1,4 +1,3 @@
-import { AuthGuard } from '@/auth/infrastructure/auth/auth.guard'
 import { AuthService } from '@/auth/infrastructure/auth/auth.service'
 import { SignupUseCase } from '@/users/application/usecases/signup.usecase'
 import {
@@ -13,6 +12,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, getSchemaPath } from '@nestjs/swagger'
@@ -28,6 +28,12 @@ import { SignupDTO } from './dto/signup.dto'
 import { UpdatePasswordDTO } from './dto/update-password.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserPresenter } from './presenters/user.presenter'
+import { GoogleAuthRequest } from '@/auth/infrastructure/auth/interfaces/google-auth-request.interface'
+import { JwtAuthGuard  } from '@/auth/infrastructure/auth/guards/jwt-auth.guard'
+import { GoogleOauthGuard } from '@/auth/infrastructure/auth/guards/google-oauth.guard'
+import { Roles } from '@/auth/infrastructure/auth/decorators/roles.decorator'
+import { RolesGuard } from '@/auth/infrastructure/auth/guards/roles.guard'
+import { ListInactiveUsersUseCase } from '../application/usecases/list-inactive-users.usecase'
 
 @Controller('/users')
 export class UsersController {
@@ -52,6 +58,9 @@ export class UsersController {
   @Inject(ListUsersUseCase.UseCase)
   private listUsersUseCase: ListUsersUseCase.UseCase
 
+  @Inject(ListInactiveUsersUseCase.UseCase)
+  private listInactiveUsersUseCase: ListInactiveUsersUseCase.UseCase
+
   @Inject(AuthService)
   private authService: AuthService
 
@@ -66,36 +75,6 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: SignupDTO) {
     return this.signupUseCase.execute(createUserDto)
-  }
-
-  @ApiResponse({
-    status: 200,
-    schema: {
-      type: 'object',
-      properties: {
-        accessToken: {
-          type: 'string',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 422,
-    description: 'Corpo da requisição com dados inválidos',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'E-mail não encontrado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Credenciais inválidas',
-  })
-  @HttpCode(200)
-  @Post('login')
-  async login(@Body() signinDto: SigninDTO) {
-    const output = await this.signinUseCase.execute(signinDto)
-    return this.authService.generateToken(output.id)
   }
 
   @ApiBearerAuth()
@@ -136,10 +115,97 @@ export class UsersController {
     status: 401,
     description: 'Acesso não autorizado',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Get()
   async findAll(@Query() query: ListUsersDTO) {
     return this.listUsersUseCase.execute(query)
+  }
+
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    schema: {
+      type: 'object',
+      properties: {
+        meta: {
+          type: 'object',
+          properties: {
+            total: {
+              type: 'number',
+            },
+            currentPage: {
+              type: 'number',
+            },
+            lastPage: {
+              type: 'number',
+            },
+            perPage: {
+              type: 'number',
+            },
+          },
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(UserPresenter) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Parâmetros de consulta inválidos',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Acesso não autorizado',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get("inactive")
+  async findInactiveUsers(@Query() query: ListUsersDTO) {
+    return this.listInactiveUsersUseCase.execute(query)
+  }
+
+  @ApiResponse({
+    status: 200,
+    schema: {
+      type: 'object',
+      properties: {
+        accessToken: {
+          type: 'string',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Corpo da requisição com dados inválidos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'E-mail não encontrado',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Credenciais inválidas',
+  })
+  @HttpCode(200)
+  @Post('login')
+  async login(@Body() signinDto: SigninDTO) {
+    const output = await this.signinUseCase.execute(signinDto)
+    return this.authService.generateToken(output.id, output.role)
+  }
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuth(@Req() req) {
+  }
+
+  @Get('auth/google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthRedirect(@Req() req: GoogleAuthRequest) {
+    return this.authService.googleLogin(req.user);
   }
 
   @ApiBearerAuth()
@@ -151,9 +217,10 @@ export class UsersController {
     status: 401,
     description: 'Acesso não autorizado',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
+    console.log("id")
     return this.getUserUseCase.execute({ id: id })
   }
 
@@ -170,7 +237,7 @@ export class UsersController {
     status: 401,
     description: 'Acesso não autorizado',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.updateUserUseCase.execute({ id: id, ...updateUserDto })
@@ -189,7 +256,7 @@ export class UsersController {
     status: 401,
     description: 'Acesso não autorizado',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async UpdatePassword(
     @Param('id') id: string,
@@ -203,4 +270,6 @@ export class UsersController {
   async remove(@Param('id') id: string) {
     return this.deleteUserUseCase.execute({ id })
   }
+
+  
 }

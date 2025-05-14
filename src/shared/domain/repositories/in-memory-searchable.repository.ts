@@ -32,6 +32,7 @@ export abstract class InMemorySearchableRepository<E extends Entity>
       sort: props.sort,
       sortDir: props.sortDir,
       filter: props.filter,
+      role: props.role
     })
   }
 

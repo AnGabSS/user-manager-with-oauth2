@@ -9,6 +9,7 @@ export class UserInMemoryRepository
   extends InMemorySearchableRepository<UserEntity>
   implements UserRepository.Repository
 {
+
   sortableFields: string[] = ['name', 'createdAt']
 
   async findByEmail(email: string): Promise<UserEntity> {
@@ -46,5 +47,9 @@ export class UserInMemoryRepository
     return !sort
       ? super.applySort(items, 'createdAt', 'desc')
       : super.applySort(items, sort, sortDir)
+  }
+
+  async  findInactivesUsers(props: UserRepository.SearchParams): Promise<UserRepository.SearchResult> {
+    throw new Error('Method not implemented.')
   }
 }

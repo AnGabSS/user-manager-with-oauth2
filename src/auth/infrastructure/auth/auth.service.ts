@@ -1,10 +1,12 @@
 import { EnvConfigService } from '@/shared/infrastructure/env-config/env-config.service'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { GoogleUser } from './interfaces/google-user.interface'
 
 type JwtPayload = {
   sub: string
   id: string
+  role: string
 }
 
 type TokenResponse = {
@@ -19,8 +21,8 @@ export class AuthService {
     private readonly configService: EnvConfigService,
   ) {}
 
-  async generateToken(userId: string): Promise<TokenResponse> {
-    const payload: JwtPayload = { sub: userId, id: userId }
+  async generateToken(userId: string, role: string): Promise<TokenResponse> {
+    const payload: JwtPayload = { sub: userId, id: userId, role:  role}
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.getJwtSecret(),
@@ -60,5 +62,27 @@ export class AuthService {
       default:
         return 3600 // Default 1h
     }
+  }
+
+  async googleLogin(req: GoogleUser) {
+    console.log(req)
+    if (!req.email) {
+      return 'Nenhum usuário do Google encontrado';
+    }
+
+    const payload = {
+      email: req.email,
+      name: req.name,
+      picture: req.picture,
+      accessToken: req.accessToken
+    };
+
+    const token = this.jwtService.sign(payload);
+
+    return {
+      message: 'Login com Google bem-sucedido',
+      user: req.email,
+      access_token: token,
+    };
   }
 }

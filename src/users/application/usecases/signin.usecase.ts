@@ -37,6 +37,9 @@ export namespace SigninUseCase {
         throw new InvalidCredentialsError('Invalid credentials')
       }
 
+      entity.updateLastLoginAt()
+      this.userRepository.update(entity)
+
       return UserOutputMapper.toOutput(entity)
     }
   }

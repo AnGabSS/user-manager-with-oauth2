@@ -11,9 +11,15 @@ export class WrapperDataInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map(body => {
-        return !body || 'accessToken' in body || 'meta' in body
-          ? body
-          : { data: body }
+        if (
+          body &&
+          typeof body === 'object' &&
+          ('accessToken' in body || 'meta' in body)
+        ) {
+          return body
+        }
+
+        return { data: body }
       }),
     )
   }

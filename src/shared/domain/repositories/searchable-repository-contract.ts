@@ -1,3 +1,4 @@
+import { UserRole } from '@prisma/client'
 import { Entity } from '../entities/entity'
 import { RepositoryInterface } from './repository-contracts'
 
@@ -8,7 +9,9 @@ export type SearchProps<Filter = string> = {
   perPage?: number
   sort?: string | null
   sortDir?: SortDirection | null
-  filter?: Filter | null
+  filter?: Filter | null,
+  role?: UserRole | null
+
 }
 
 export type SearchResultProps<E extends Entity, Filter> = {
@@ -19,6 +22,7 @@ export type SearchResultProps<E extends Entity, Filter> = {
   sort: string | null
   sortDir: string | null
   filter: Filter | null
+  role: UserRole | null
 }
 
 export class SearchParams<Filter = string> {
@@ -27,6 +31,7 @@ export class SearchParams<Filter = string> {
   protected _sort: string | null
   protected _sortDir: SortDirection | null
   protected _filter: Filter | null
+  protected _role: UserRole | null
 
   constructor(props: SearchProps<Filter> = {}) {
     this.page = props.page
@@ -34,6 +39,7 @@ export class SearchParams<Filter = string> {
     this.sort = props.sort
     this.sortDir = props.sortDir
     this.filter = props.filter
+    this.role = props.role
   }
 
   get page() {
@@ -95,6 +101,14 @@ export class SearchParams<Filter = string> {
       value === null || value === undefined || value === ''
         ? null
         : (`${value}` as any)
+  }
+
+  get role(): UserRole | null {
+    return this._role
+  } 
+
+  private set role(value: UserRole | null){
+    this._role = value
   }
 }
 

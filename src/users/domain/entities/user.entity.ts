@@ -54,6 +54,14 @@ export class UserEntity extends Entity<UserProps> {
     this.props.updatedAt = newUpdatedAt
   }
 
+  get lastLoginAt(): Date | undefined {
+    return this.props.lastLoginAt
+  }
+
+  private set lastLoginAt(newLastLoginAt: Date){
+    this.props.lastLoginAt = newLastLoginAt
+  }
+
   updateName(newName: string): void {
     if (!newName || newName.trim().length < 2) {
       throw new Error('Invalid name.')
@@ -87,6 +95,10 @@ export class UserEntity extends Entity<UserProps> {
     this.props.updatedAt = new Date()
   }
 
+   updateLastLoginAt(): void{
+    this.props.lastLoginAt = new Date()
+  }
+
   toPrimitives(): UserProps {
     return {
       name: this.props.name,
@@ -95,6 +107,7 @@ export class UserEntity extends Entity<UserProps> {
       role: this.props.role,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
+      lastLoginAt: this.props.lastLoginAt,
     }
   }
 }

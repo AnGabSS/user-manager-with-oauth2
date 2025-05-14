@@ -9,6 +9,7 @@ export type UserOutput = {
   password: string
   createdAt: Date
   updatedAt: Date
+  lastLoginAt: Date
 }
 
 export class UserOutputMapper {

@@ -21,5 +21,8 @@ export namespace UserRepository {
     > {
     findByEmail(email: string): Promise<UserEntity>
     emailExists(email: string): Promise<void>
+    findInactivesUsers(
+    props: UserRepository.SearchParams,
+  ): Promise<UserRepository.SearchResult>
   }
 }
