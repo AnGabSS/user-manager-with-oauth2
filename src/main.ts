@@ -7,9 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
     app.enableCors({
-    origin: ['*'], // ou '*' para todos
-    credentials: true, // se estiver usando cookies ou auth headers
-  });
+      origin: '*',
+      credentials: false,
+    });
 
     const config = new DocumentBuilder()
     .setTitle('User Manager API')
