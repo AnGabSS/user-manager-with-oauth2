@@ -194,7 +194,7 @@ export class UsersController {
   @Post('login')
   async login(@Body() signinDto: SigninDTO) {
     const output = await this.signinUseCase.execute(signinDto)
-    return this.authService.generateToken(output.id, output.role)
+    return this.authService.generateToken(output.id, output.role, output.id)
   }
 
   @Get('google')
