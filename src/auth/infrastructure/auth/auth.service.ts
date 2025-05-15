@@ -12,6 +12,8 @@ type JwtPayload = {
 type TokenResponse = {
   accessToken: string
   expiresIn: number
+  id: string
+  role: string
 }
 
 @Injectable()
@@ -21,7 +23,7 @@ export class AuthService {
     private readonly configService: EnvConfigService,
   ) {}
 
-  async generateToken(userId: string, role: string): Promise<TokenResponse> {
+  async generateToken(userId: string, role: string, id: string): Promise<TokenResponse> {
     const payload: JwtPayload = { sub: userId, id: userId, role:  role}
 
     const accessToken = await this.jwtService.signAsync(payload, {
@@ -32,6 +34,8 @@ export class AuthService {
     return {
       accessToken,
       expiresIn: this.configService.getJwtExpiresIn(),
+      id,
+      role
     }
   }
 
