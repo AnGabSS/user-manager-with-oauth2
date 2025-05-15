@@ -1,4 +1,9 @@
 import { AuthService } from '@/auth/infrastructure/auth/auth.service'
+import { Roles } from '@/auth/infrastructure/auth/decorators/roles.decorator'
+import { GoogleOauthGuard } from '@/auth/infrastructure/auth/guards/google-oauth.guard'
+import { JwtAuthGuard } from '@/auth/infrastructure/auth/guards/jwt-auth.guard'
+import { RolesGuard } from '@/auth/infrastructure/auth/guards/roles.guard'
+import { GoogleAuthRequest } from '@/auth/infrastructure/auth/interfaces/google-auth-request.interface'
 import { SignupUseCase } from '@/users/application/usecases/signup.usecase'
 import {
   Body,
@@ -18,6 +23,7 @@ import {
 import { ApiBearerAuth, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 import { DeleteUserUseCase } from '../application/usecases/delete-user.usecase'
 import { GetUserUseCase } from '../application/usecases/getuser.usecase'
+import { ListInactiveUsersUseCase } from '../application/usecases/list-inactive-users.usecase'
 import { ListUsersUseCase } from '../application/usecases/listusers.usecase'
 import { SigninUseCase } from '../application/usecases/signin.usecase'
 import { UpdatePasswordUseCase } from '../application/usecases/update-password.usecase'
@@ -28,12 +34,6 @@ import { SignupDTO } from './dto/signup.dto'
 import { UpdatePasswordDTO } from './dto/update-password.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserPresenter } from './presenters/user.presenter'
-import { GoogleAuthRequest } from '@/auth/infrastructure/auth/interfaces/google-auth-request.interface'
-import { JwtAuthGuard  } from '@/auth/infrastructure/auth/guards/jwt-auth.guard'
-import { GoogleOauthGuard } from '@/auth/infrastructure/auth/guards/google-oauth.guard'
-import { Roles } from '@/auth/infrastructure/auth/decorators/roles.decorator'
-import { RolesGuard } from '@/auth/infrastructure/auth/guards/roles.guard'
-import { ListInactiveUsersUseCase } from '../application/usecases/list-inactive-users.usecase'
 
 @Controller('/users')
 export class UsersController {
@@ -162,7 +162,7 @@ export class UsersController {
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @Get("inactive")
+  @Get('inactive')
   async findInactiveUsers(@Query() query: ListUsersDTO) {
     return this.listInactiveUsersUseCase.execute(query)
   }
@@ -199,13 +199,12 @@ export class UsersController {
 
   @Get('google')
   @UseGuards(GoogleOauthGuard)
-  async googleAuth(@Req() req) {
-  }
+  async googleAuth(@Req() req) {}
 
   @Get('auth/google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: GoogleAuthRequest) {
-    return this.authService.googleLogin(req.user);
+    return this.authService.googleLogin(req.user)
   }
 
   @ApiBearerAuth()
@@ -220,7 +219,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    console.log("id")
     return this.getUserUseCase.execute({ id: id })
   }
 
@@ -270,6 +268,4 @@ export class UsersController {
   async remove(@Param('id') id: string) {
     return this.deleteUserUseCase.execute({ id })
   }
-
-  
 }

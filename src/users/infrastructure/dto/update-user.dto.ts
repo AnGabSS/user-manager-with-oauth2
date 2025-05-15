@@ -7,4 +7,9 @@ export class UpdateUserDto implements Omit<UpdateUserUseCase.Input, 'id'> {
   @IsString()
   @IsNotEmpty()
   name: string
+
+  @ApiProperty({ description: 'E-mail do usuário' })
+  @IsString()
+  @IsNotEmpty()
+  email: string
 }

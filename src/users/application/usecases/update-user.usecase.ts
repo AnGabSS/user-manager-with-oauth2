@@ -7,6 +7,7 @@ export namespace UpdateUserUseCase {
   export type Input = {
     id: string
     name: string
+    email: string
   }
 
   export type Output = UserOutput
@@ -19,8 +20,11 @@ export namespace UpdateUserUseCase {
         throw new BadRequestError('Name not provided')
       }
       const entity = await this.userRepository.findById(input.id)
+      if (entity.email !== input.email) {
+        await this.userRepository.emailExists(input.email)
+      }
       entity.updateName(input.name)
-
+      entity.updateEmail(input.email)
       await this.userRepository.update(entity)
       return UserOutputMapper.toOutput(entity)
     }
