@@ -11,7 +11,7 @@ Deploy foi realizado no render.com, segue URL da api: https://user-manager-with-
 
 - Registro de usuários (`/auth/register`)
 - Login com geração de token JWT (`/auth/login`)
-- Integração opcional com OAuth2 (Google, Microsoft)
+- Integração com OAuth2 (Google, Microsoft)
 - Operações CRUD:
   - Criação de usuários
   - Atualização e remoção (restrito a admins)
@@ -57,7 +57,7 @@ cd user-manager-with-oauth2
 # Instale as dependências
 npm install
 
-# Configure as variáveis de ambiente (.env ou .env.development)
+# Configure as variáveis de ambiente (.env ou .env.development) baseado no .env.example
 
 # Rode as migrações (se necessário)
 npm run prisma:migrate
