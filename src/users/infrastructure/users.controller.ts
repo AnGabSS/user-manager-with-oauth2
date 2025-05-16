@@ -72,7 +72,7 @@ export class UsersController {
     status: 422,
     description: 'Corpo da requisição com dados inválidos',
   })
-  @Post()
+  @Post("auth/register")
   async create(@Body() createUserDto: SignupDTO) {
     return this.signupUseCase.execute(createUserDto)
   }
@@ -191,7 +191,7 @@ export class UsersController {
     description: 'Credenciais inválidas',
   })
   @HttpCode(200)
-  @Post('login')
+  @Post('auth/login')
   async login(@Body() signinDto: SigninDTO) {
     const output = await this.signinUseCase.execute(signinDto)
     return this.authService.generateToken(output.id, output.role, output.id)
