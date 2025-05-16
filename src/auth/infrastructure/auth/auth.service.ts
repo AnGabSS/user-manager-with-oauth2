@@ -69,7 +69,6 @@ export class AuthService {
   }
 
   async googleLogin(req: GoogleUser) {
-    console.log(req)
     if (!req.email) {
       return 'Nenhum usuário do Google encontrado';
     }
